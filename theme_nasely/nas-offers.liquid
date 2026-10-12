@@ -1,0 +1,83 @@
+<style>
+
+/* ===== Offres Nasely v4 : 1+1 / 2+2 + guides offerts ===== */
+.cv-section.nas-p-main .nas-pm-tiles{gap:18px}
+.cv-section.nas-p-main .nas-pm-tile{flex-wrap:wrap;border:2px solid #e5e0dc;background:#fff;padding:16px 16px 16px 14px;transition:border-color .2s,box-shadow .2s,background .2s,transform .2s}
+.cv-section.nas-p-main .nas-pm-tile:hover{border-color:#cdb7b1}
+/* case à cocher ronde */
+.cv-section.nas-p-main .nas-pm-tile-check{flex:0 0 20px;width:20px;height:20px;border-radius:50%;border:2px solid #cdb7b1;background:#fff;position:relative;transition:all .2s}
+.cv-section.nas-p-main .nas-pm-tile-selected .nas-pm-tile-check{border-color:#6E100F;background:#6E100F;box-shadow:inset 0 0 0 3px #fff}
+/* image + quantité */
+.cv-section.nas-p-main .nas-pm-tile-imgwrap{position:relative;flex-shrink:0}
+.cv-section.nas-p-main .nas-pm-tile-qty{position:absolute;right:-6px;bottom:-4px;background:#6E100F;color:#fff;font-size:10px;font-weight:800;border-radius:20px;padding:2px 6px;border:2px solid #fff}
+.cv-section.nas-p-main .nas-pm-tile-text{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cv-section.nas-p-main .nas-pm-tile-label{font-size:15px;font-weight:800;color:#1a1a1a}
+.cv-section.nas-p-main .nas-pm-tile-sub{font-size:12px;color:#7a6f6c;font-weight:600}
+/* état sélectionné (offre 1) */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-selected{border:2px solid #6E100F;background:#FDF2F0;box-shadow:0 0 0 3px rgba(110,16,15,.12)}
+/* offre 2 (non sélectionnée) : bordure différente des autres */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-popular{border:2px dashed #6E100F;background:#FFFAF9;margin-top:6px}
+/* offre 2 sélectionnée : bordure dégradée or / bordeaux + halo */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-popular.nas-pm-tile-selected{border:3px solid transparent;background:linear-gradient(#FDF2F0,#FDF2F0) padding-box,linear-gradient(135deg,#C9A46A 0%,#6E100F 45%,#C9A46A 100%) border-box;box-shadow:0 10px 26px rgba(110,16,15,.20);transform:translateY(-1px)}
+.cv-section.nas-p-main .nas-pm-tile-ribbon{background:linear-gradient(90deg,#6E100F,#9b1d1b);color:#fff;font-size:9.5px;letter-spacing:.6px;padding:5px 12px;top:-14px;box-shadow:0 3px 8px rgba(110,16,15,.25)}
+.cv-section.nas-p-main .nas-pm-tile-popular.nas-pm-tile-selected .nas-pm-tile-ribbon{background:linear-gradient(90deg,#B98A4A,#C9A46A);color:#3a1a0a}
+/* guides offerts dans l'offre 2 */
+.cv-section.nas-p-main .nas-pm-tile-gifts{flex:0 0 100%;display:flex;flex-direction:column;gap:8px;margin-top:6px;padding-top:12px;border-top:1px dashed #e3c9c3;opacity:.6;transition:opacity .2s}
+.cv-section.nas-p-main .nas-pm-tile-selected .nas-pm-tile-gifts{opacity:1}
+.cv-section.nas-p-main .nas-pm-tile-gifts-title{font-size:12px;font-weight:800;color:#6E100F}
+.cv-section.nas-p-main .nas-pm-gift-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #f0dcd7;border-radius:10px;padding:8px 10px}
+.cv-section.nas-p-main .nas-pm-gift-cover{flex:0 0 38px;height:50px;border-radius:4px 6px 6px 4px;background:#6E100F;color:#fff;font-size:6.5px;font-weight:800;line-height:1.15;display:flex;align-items:flex-end;padding:4px;box-shadow:2px 2px 0 #c9a46a,0 2px 6px rgba(0,0,0,.15);text-transform:uppercase}
+.cv-section.nas-p-main .nas-pm-gift-cover-2{background:#9b1d1b}
+.cv-section.nas-p-main .nas-pm-gift-info{flex:1;display:flex;flex-direction:column;min-width:0}
+.cv-section.nas-p-main .nas-pm-gift-name{font-size:12.5px;font-weight:700;color:#1a1a1a;line-height:1.25}
+.cv-section.nas-p-main .nas-pm-gift-desc{font-size:11px;color:#8a7f7c}
+.cv-section.nas-p-main .nas-pm-gift-price{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.cv-section.nas-p-main .nas-pm-gift-price s{font-size:11px;color:#999}
+.cv-section.nas-p-main .nas-pm-gift-price b{font-size:11px;font-weight:800;color:#fff;background:#2e7d32;border-radius:20px;padding:2px 8px}
+@media(max-width:768px){.cv-section.nas-p-main .nas-pm-tile-label{font-size:14px}.cv-section.nas-p-main .nas-pm-gift-name{font-size:12px}}
+</style>
+<div class="nas-pm-offer-header"><span class="nas-pm-offer-line"></span><span class="nas-pm-offer-text">Offre Exclusive <span class="nas-pm-offer-sep">|</span> Fin à Minuit</span><span class="nas-pm-offer-line"></span></div>
+<div class="nas-pm-tiles">
+{% assign nas_selected = product.selected_or_first_available_variant %}
+{% for variant in product.variants limit: 2 %}
+{% assign nas_pop = false %}{% if forloop.index == 2 %}{% assign nas_pop = true %}{% endif %}
+<label class="nas-pm-tile{% if nas_pop %} nas-pm-tile-popular{% endif %}{% if variant == nas_selected %} nas-pm-tile-selected{% endif %}" data-variant-id="{{ variant.id }}" data-gifts="{% if nas_pop %}1{% else %}0{% endif %}" data-price="{{ variant.price | money_without_currency }}" data-compare="{{ variant.compare_at_price | money_without_currency }}">
+{% if nas_pop %}<span class="nas-pm-tile-ribbon">★ MEILLEURE OFFRE · 2 GUIDES OFFERTS</span>{% endif %}
+<input type="radio" name="nas-pm-tile-radio" value="{{ variant.id }}" {% if variant == nas_selected %}checked{% endif %}>
+<span class="nas-pm-tile-check" aria-hidden="true"></span>
+<span class="nas-pm-tile-imgwrap">
+<img src="https://cdn.shopify.com/s/files/1/1013/1783/7187/files/nasely-bottle-single.webp?v=1790709670&width=200" alt="Flacon Nasely">
+<span class="nas-pm-tile-qty">×{% if nas_pop %}4{% else %}2{% endif %}</span>
+</span>
+<span class="nas-pm-tile-text">
+{% if nas_pop %}
+<span class="nas-pm-tile-label">2 Achetés = 2 OFFERTS</span>
+<span class="nas-pm-tile-sub">4 flacons · 4 mois de cure</span>
+{% else %}
+<span class="nas-pm-tile-label">1 Acheté = 1 OFFERT</span>
+<span class="nas-pm-tile-sub">2 flacons · 2 mois de cure</span>
+{% endif %}
+</span>
+<span class="nas-pm-tile-priceblock">
+<span class="nas-pm-tile-price">{{ variant.price | money }}</span>
+{% if variant.compare_at_price > variant.price %}<span class="nas-pm-tile-compare">{{ variant.compare_at_price | money }}</span>{% endif %}
+</span>
+{% if nas_pop %}
+<span class="nas-pm-tile-gifts">
+<span class="nas-pm-tile-gifts-title">🎁 Inclus uniquement avec cette offre :</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover"><span>Mieux dormir<br>en 14 jours</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Mieux dormir en 14 jours »</span><span class="nas-pm-gift-desc">Programme guidé jour par jour · PDF</span></span>
+<span class="nas-pm-gift-price"><s>9,99 €</s><b>OFFERT</b></span>
+</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover nas-pm-gift-cover-2"><span>Recettes<br>du soir</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Recettes du soir pour mieux dormir »</span><span class="nas-pm-gift-desc">15 recettes maison · PDF</span></span>
+<span class="nas-pm-gift-price"><s>12,99 €</s><b>OFFERT</b></span>
+</span>
+</span>
+{% endif %}
+</label>
+{% endfor %}
+</div>
+<input type="hidden" id="nas-pm-gift-prop" name="properties[Cadeaux offerts]" value="Guide Mieux dormir en 14 jours + Guide Recettes du soir pour mieux dormir"{% assign nas_sel_index = 0 %}{% for v in product.variants limit: 2 %}{% if v == nas_selected %}{% assign nas_sel_index = forloop.index %}{% endif %}{% endfor %}{% unless nas_sel_index == 2 %} disabled{% endunless %}>
