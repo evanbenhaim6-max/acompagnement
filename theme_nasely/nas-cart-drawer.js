@@ -23,6 +23,12 @@
     62714822394243: 6980,
     62714974732675: 13960
   };
+  /* Prix connus : permet d'afficher le panier rempli instantanément, avant la réponse du serveur */
+  var NAS_KNOWN_PRICE = {
+    62714822394243: 3490,
+    62714974732675: 4990
+  };
+  var NAS_BOTTLE_IMG = 'https://cdn.shopify.com/s/files/1/1013/1783/7187/files/nasely-bottle-single.webp?v=1790709670&width=200';
   /* Guides = vrais produits (9,99 € / 12,99 €), offerts à -100 % par une réduction automatique quand l'offre 2 est dans le panier. */
   var NAS_GUIDE_ORDER = [62807604035971, 62807604429187];
   var NAS_GUIDES = {
@@ -52,7 +58,11 @@
       '.nas-cart-total-compare{font-size:14px;color:#999;text-decoration:line-through;margin-right:8px;font-weight:600}' +
       '.nas-cart-savings{margin:6px 0 0;text-align:right;font-size:13px;font-weight:800;color:#2e7d32}' +
       '#nas-cart-items{transition:opacity .15s}' +
-      '#nas-cart-items.nas-cart-loading{opacity:.55;pointer-events:none}';
+      '#nas-cart-items.nas-cart-loading{opacity:.55;pointer-events:none}' +
+      '#nas-cart-items.nas-cart-pending{pointer-events:none}' +
+      '.nas-cart-wait{display:flex;justify-content:center;padding:48px 0}' +
+      '.nas-cart-wait span{width:26px;height:26px;border:3px solid #f0dcd7;border-top-color:#6E100F;border-radius:50%;animation:nasSpin .7s linear infinite}' +
+      '@keyframes nasSpin{to{transform:rotate(360deg)}}';
     document.head.appendChild(st);
   })();
 
@@ -150,6 +160,47 @@
 
   function setLoading(on) {
     itemsEl.classList.toggle('nas-cart-loading', !!on);
+    if (!on) itemsEl.classList.remove('nas-cart-pending');
+  }
+
+  /* Petit indicateur de chargement (jamais « panier vide » pendant un ajout) */
+  function showWaiting() {
+    emptyEl.hidden = true;
+    itemsEl.classList.remove('nas-cart-loading');
+    itemsEl.innerHTML = '<div class="nas-cart-wait"><span></span></div>';
+  }
+
+  /* Panier « prévu » affiché immédiatement : panier actuel + ce qui vient d'être ajouté */
+  function optimisticCart(base, addedId, qty) {
+    var price = NAS_KNOWN_PRICE[addedId];
+    if (!price) return null;
+    var items = (base ? base.items : []).map(function(it) {
+      var c = {};
+      for (var k in it) c[k] = it[k];
+      return c;
+    });
+    var title = 'Extrait de Cerise Griotte';
+    var image = NAS_BOTTLE_IMG;
+    items.forEach(function(it) { if (bundleOf(it)) { title = it.product_title; image = it.image || image; } });
+    var existing = items.filter(function(it) { return it.variant_id === addedId; })[0];
+    if (existing) {
+      existing.quantity += qty;
+      existing.line_price = existing.price * existing.quantity;
+      existing.final_line_price = existing.line_price;
+      existing.original_line_price = existing.line_price;
+    } else {
+      items.unshift({ key: 'nas-pending', variant_id: addedId, quantity: qty, price: price, line_price: price * qty, final_line_price: price * qty, original_line_price: price * qty, product_title: title, image: image });
+    }
+    var hasGiftBundle = items.some(function(it) { return it.variant_id === NAS_GIFT_BUNDLE_ID; });
+    if (hasGiftBundle) {
+      items.forEach(function(it) {
+        var g = guideOf(it);
+        if (g) { it.final_line_price = 0; it.original_line_price = g.price * it.quantity; }
+      });
+    }
+    var total = 0;
+    items.forEach(function(it) { total += it.final_line_price != null ? it.final_line_price : it.line_price; });
+    return { items: items, total_price: total, pending: true };
   }
 
   function qtyControls(item) {
@@ -209,8 +260,9 @@
   var lastCart = null;
 
   function renderCart(cart) {
-    lastCart = cart;
+    if (!cart.pending) lastCart = cart;
     setLoading(false);
+    if (cart.pending) itemsEl.classList.add('nas-cart-pending');
     itemsEl.innerHTML = '';
     var compareTotal = 0;
     if (!cart.items.length) {
@@ -306,15 +358,18 @@
     }
   }
 
-  function showCart(cart) {
+  /* Pendant un ajout, une ancienne réponse ne doit jamais remplacer l'affichage prévu */
+  var adding = 0;
+  function showCart(cart, force) {
     return loadProductsForCart(cart).then(function() {
+      if (adding && !force) { lastCart = cart; return cart; }
       renderCart(cart);
       return cart;
     });
   }
 
-  function fetchCart() {
-    return fetch('/cart.js').then(function(r) { return r.json(); }).then(showCart);
+  function fetchCart(force) {
+    return fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) { return showCart(cart, force); });
   }
 
   function changeItem(key, quantity) {
@@ -346,8 +401,7 @@
   });
 
   function openNow() {
-    if (lastCart) renderCart(lastCart);
-    setLoading(true);
+    if (lastCart) { renderCart(lastCart); setLoading(true); } else { showWaiting(); }
     openDrawer();
     return fetchCart().catch(function() { setLoading(false); });
   }
@@ -386,12 +440,17 @@
       e.preventDefault();
       var formData = new FormData(form);
       var addedId = parseInt(formData.get('id'), 10);
-      /* Ouverture immédiate du panier, mise à jour dès que l'ajout est confirmé */
-      if (lastCart) renderCart(lastCart);
-      setLoading(true);
+      /* Ouverture immédiate du panier déjà rempli, confirmé dès la réponse du serveur */
+      var qty = parseInt(formData.get('quantity'), 10) || 1;
+      var guess = optimisticCart(lastCart, addedId, qty);
+      if (guess) renderCart(guess);
+      else if (lastCart && lastCart.items.length) { renderCart(lastCart); setLoading(true); }
+      else showWaiting();
       openDrawer();
+      adding++;
+      var oneRequest = addedId === NAS_GIFT_BUNDLE_ID && !!lastCart;
       var req;
-      if (addedId === NAS_GIFT_BUNDLE_ID && lastCart) {
+      if (oneRequest) {
         req = fetch('/cart/add.js', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -408,12 +467,14 @@
         if (!r.ok) return r.json().then(function(err) { throw err; });
         return r.json();
       }).then(function() {
-        if (addedId === NAS_GIFT_BUNDLE_ID && !lastCart) return addGuidesIfMissing();
+        if (addedId === NAS_GIFT_BUNDLE_ID && !oneRequest) return addGuidesIfMissing();
       }).then(function() {
-        return fetchCart();
+        adding--;
+        return fetchCart(true);
       }).catch(function(err) {
+        adding = Math.max(0, adding - 1);
         console.error('Nasely cart: add to cart failed', err);
-        fetchCart().catch(function() { setLoading(false); });
+        fetchCart(true).catch(function() { setLoading(false); });
       });
     });
   }
@@ -435,7 +496,7 @@
 
   document.querySelectorAll('form[action*="/cart/add"]').forEach(interceptForm);
 
-  window.nasCart = { open: openNow, refresh: fetchCart };
+  window.nasCart = { open: openNow, refresh: function() { return fetchCart(); } };
 
   fetchCart();
 })();
