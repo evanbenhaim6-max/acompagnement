@@ -1,0 +1,45 @@
+<div class="nas-pm-offer-header"><span class="nas-pm-offer-line"></span><span class="nas-pm-offer-text">Offre Exclusive <span class="nas-pm-offer-sep">|</span> Fin à Minuit</span><span class="nas-pm-offer-line"></span></div>
+<div class="nas-pm-tiles">
+{% assign nas_selected = product.selected_or_first_available_variant %}
+{% for variant in product.variants limit: 2 %}
+{% assign nas_pop = false %}{% if forloop.index == 2 %}{% assign nas_pop = true %}{% endif %}
+<label class="nas-pm-tile{% if nas_pop %} nas-pm-tile-popular{% endif %}{% if variant == nas_selected %} nas-pm-tile-selected{% endif %}" data-variant-id="{{ variant.id }}" data-gifts="{% if nas_pop %}1{% else %}0{% endif %}" data-price="{{ variant.price | money_without_currency }}" data-compare="{{ variant.compare_at_price | money_without_currency }}">
+{% if nas_pop %}<span class="nas-pm-tile-ribbon">★ MEILLEURE OFFRE · 2 GUIDES OFFERTS</span>{% endif %}
+<input type="radio" name="nas-pm-tile-radio" value="{{ variant.id }}" {% if variant == nas_selected %}checked{% endif %}>
+<span class="nas-pm-tile-check" aria-hidden="true"></span>
+<span class="nas-pm-tile-imgwrap">
+<img src="https://cdn.shopify.com/s/files/1/1013/1783/7187/files/nasely-bottle-single.webp?v=1790709670&width=200" alt="Flacon Nasely">
+<span class="nas-pm-tile-qty">×{% if nas_pop %}4{% else %}2{% endif %}</span>
+</span>
+<span class="nas-pm-tile-text">
+{% if nas_pop %}
+<span class="nas-pm-tile-label">2 Achetés = 2 OFFERTS</span>
+<span class="nas-pm-tile-sub">4 flacons · 4 mois de cure</span>
+{% else %}
+<span class="nas-pm-tile-label">1 Acheté = 1 OFFERT</span>
+<span class="nas-pm-tile-sub">2 flacons · 2 mois de cure</span>
+{% endif %}
+</span>
+<span class="nas-pm-tile-priceblock">
+<span class="nas-pm-tile-price">{{ variant.price | money }}</span>
+{% if variant.compare_at_price > variant.price %}<span class="nas-pm-tile-compare">{{ variant.compare_at_price | money }}</span>{% endif %}
+</span>
+{% if nas_pop %}
+<span class="nas-pm-tile-gifts">
+<span class="nas-pm-tile-gifts-title">🎁 Inclus uniquement avec cette offre :</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover"><span>Mieux dormir<br>en 14 jours</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Mieux dormir en 14 jours »</span><span class="nas-pm-gift-desc">Programme guidé jour par jour · PDF</span></span>
+<span class="nas-pm-gift-price"><s>9,99 €</s><b>OFFERT</b></span>
+</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover nas-pm-gift-cover-2"><span>Recettes<br>du soir</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Recettes du soir pour mieux dormir »</span><span class="nas-pm-gift-desc">15 recettes maison · PDF</span></span>
+<span class="nas-pm-gift-price"><s>12,99 €</s><b>OFFERT</b></span>
+</span>
+</span>
+{% endif %}
+</label>
+{% endfor %}
+</div>
+<input type="hidden" id="nas-pm-gift-prop" name="properties[Cadeaux offerts]" value="Guide Mieux dormir en 14 jours + Guide Recettes du soir pour mieux dormir"{% assign nas_sel_index = 0 %}{% for v in product.variants limit: 2 %}{% if v == nas_selected %}{% assign nas_sel_index = forloop.index %}{% endif %}{% endfor %}{% unless nas_sel_index == 2 %} disabled{% endunless %}>

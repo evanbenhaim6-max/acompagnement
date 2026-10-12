@@ -1,0 +1,338 @@
+{{ 'nas-p-main.css' | asset_url | stylesheet_tag }}
+<style>
+/* ===== Offres Nasely v4 : 1+1 / 2+2 + guides offerts ===== */
+.cv-section.nas-p-main .nas-pm-tiles{gap:18px}
+.cv-section.nas-p-main .nas-pm-tile{flex-wrap:wrap;border:2px solid #e5e0dc;background:#fff;padding:16px 16px 16px 14px;transition:border-color .2s,box-shadow .2s,background .2s,transform .2s}
+.cv-section.nas-p-main .nas-pm-tile:hover{border-color:#cdb7b1}
+/* case à cocher ronde */
+.cv-section.nas-p-main .nas-pm-tile-check{flex:0 0 20px;width:20px;height:20px;border-radius:50%;border:2px solid #cdb7b1;background:#fff;position:relative;transition:all .2s}
+.cv-section.nas-p-main .nas-pm-tile-selected .nas-pm-tile-check{border-color:#6E100F;background:#6E100F;box-shadow:inset 0 0 0 3px #fff}
+/* image + quantité */
+.cv-section.nas-p-main .nas-pm-tile-imgwrap{position:relative;flex-shrink:0}
+.cv-section.nas-p-main .nas-pm-tile-qty{position:absolute;right:-6px;bottom:-4px;background:#6E100F;color:#fff;font-size:10px;font-weight:800;border-radius:20px;padding:2px 6px;border:2px solid #fff}
+.cv-section.nas-p-main .nas-pm-tile-text{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cv-section.nas-p-main .nas-pm-tile-label{font-size:15px;font-weight:800;color:#1a1a1a}
+.cv-section.nas-p-main .nas-pm-tile-sub{font-size:12px;color:#7a6f6c;font-weight:600}
+/* état sélectionné (offre 1) */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-selected{border:2px solid #6E100F;background:#FDF2F0;box-shadow:0 0 0 3px rgba(110,16,15,.12)}
+/* offre 2 (non sélectionnée) : bordure différente des autres */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-popular{border:2px dashed #6E100F;background:#FFFAF9;margin-top:6px}
+/* offre 2 sélectionnée : bordure dégradée or / bordeaux + halo */
+.cv-section.nas-p-main .nas-pm-tile.nas-pm-tile-popular.nas-pm-tile-selected{border:3px solid transparent;background:linear-gradient(#FDF2F0,#FDF2F0) padding-box,linear-gradient(135deg,#C9A46A 0%,#6E100F 45%,#C9A46A 100%) border-box;box-shadow:0 10px 26px rgba(110,16,15,.20);transform:translateY(-1px)}
+.cv-section.nas-p-main .nas-pm-tile-ribbon{background:linear-gradient(90deg,#6E100F,#9b1d1b);color:#fff;font-size:9.5px;letter-spacing:.6px;padding:5px 12px;top:-14px;box-shadow:0 3px 8px rgba(110,16,15,.25)}
+.cv-section.nas-p-main .nas-pm-tile-popular.nas-pm-tile-selected .nas-pm-tile-ribbon{background:linear-gradient(90deg,#B98A4A,#C9A46A);color:#3a1a0a}
+/* guides offerts dans l'offre 2 */
+.cv-section.nas-p-main .nas-pm-tile-gifts{flex:0 0 100%;display:flex;flex-direction:column;gap:8px;margin-top:6px;padding-top:12px;border-top:1px dashed #e3c9c3;opacity:.6;transition:opacity .2s}
+.cv-section.nas-p-main .nas-pm-tile-selected .nas-pm-tile-gifts{opacity:1}
+.cv-section.nas-p-main .nas-pm-tile-gifts-title{font-size:12px;font-weight:800;color:#6E100F}
+.cv-section.nas-p-main .nas-pm-gift-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #f0dcd7;border-radius:10px;padding:8px 10px}
+.cv-section.nas-p-main .nas-pm-gift-cover{flex:0 0 38px;height:50px;border-radius:4px 6px 6px 4px;background:#6E100F;color:#fff;font-size:6.5px;font-weight:800;line-height:1.15;display:flex;align-items:flex-end;padding:4px;box-shadow:2px 2px 0 #c9a46a,0 2px 6px rgba(0,0,0,.15);text-transform:uppercase}
+.cv-section.nas-p-main .nas-pm-gift-cover-2{background:#9b1d1b}
+.cv-section.nas-p-main .nas-pm-gift-info{flex:1;display:flex;flex-direction:column;min-width:0}
+.cv-section.nas-p-main .nas-pm-gift-name{font-size:12.5px;font-weight:700;color:#1a1a1a;line-height:1.25}
+.cv-section.nas-p-main .nas-pm-gift-desc{font-size:11px;color:#8a7f7c}
+.cv-section.nas-p-main .nas-pm-gift-price{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.cv-section.nas-p-main .nas-pm-gift-price s{font-size:11px;color:#999}
+.cv-section.nas-p-main .nas-pm-gift-price b{font-size:11px;font-weight:800;color:#fff;background:#2e7d32;border-radius:20px;padding:2px 8px}
+@media(max-width:768px){.cv-section.nas-p-main .nas-pm-tile-label{font-size:14px}.cv-section.nas-p-main .nas-pm-gift-name{font-size:12px}}
+</style>
+<div class="cv-section nas-p-main">
+<div class="nas-pm-wrap">
+
+<div class="nas-pm-gallery">
+<div class="nas-pm-media">
+<div class="nas-pm-slides">
+
+{% assign gallery_index = 0 %}
+{% for media in product.media %}
+{% if media.media_type != 'image' %}{% continue %}{% endif %}
+{% assign m_src = media.preview_image.src %}
+{% if m_src contains 'Kaching-Bundles' %}{% continue %}{% endif %}
+<div class="nas-pm-slide" data-slide="{{ gallery_index }}">
+<img src="{{ media.preview_image | image_url: width: 1200 }}" alt="{{ product.title | escape }}">
+</div>
+{% assign gallery_index = gallery_index | plus: 1 %}
+{% endfor %}
+</div>
+<div class="nas-pm-thumbs-row">
+<button type="button" class="nas-pm-thumb-arrow nas-pm-thumb-arrow-prev" id="nas-pm-thumb-prev" aria-label="Photo précédente">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<div class="nas-pm-thumbs" id="nas-pm-thumbs">
+{% assign thumb_index = 0 %}
+{% for media in product.media %}
+{% if media.media_type != 'image' %}{% continue %}{% endif %}
+{% assign m_src = media.preview_image.src %}
+{% if m_src contains 'Kaching-Bundles' %}{% continue %}{% endif %}
+<button type="button" class="nas-pm-thumb-btn{% if thumb_index == 0 %} nas-pm-thumb-active{% endif %}" data-slide="{{ thumb_index }}"><img src="{{ media.preview_image | image_url: width: 160 }}" alt=""></button>
+{% assign thumb_index = thumb_index | plus: 1 %}
+{% endfor %}
+</div>
+<button type="button" class="nas-pm-thumb-arrow nas-pm-thumb-arrow-next" id="nas-pm-thumb-next" aria-label="Photo suivante">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+</button>
+</div>
+</div>
+</div>
+
+<div class="nas-pm-info">
+<h1 class="nas-pm-title">{{ product.title }}</h1>
+
+<div class="nas-pm-rating-line">
+<span class="nas-pm-rating-stars">★★★★★</span>
+<span class="nas-pm-rating-num">Noté 4.7</span>
+<span class="nas-pm-rating-word">Excellent</span>
+<span class="nas-pm-rating-count">1 423 avis</span>
+</div>
+
+<p class="nas-pm-social-proof">93 % de nos clients constatent :</p>
+<h2 class="nas-pm-social-headline">Un sommeil qui arrive plus vite, avec moins de réveils nocturnes en 14 jours</h2>
+
+<div class="nas-pm-feature-grid">
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">☮</span> Sommeil Réparateur</div>
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">❄</span> Extraction à Froid</div>
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">💡</span> Esprit Clair</div>
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">⬡</span> 100% Griotte Naturelle</div>
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">☀</span> Réveil Tonique</div>
+<div class="nas-pm-feature"><span class="nas-pm-feature-icon">👤</span> Favorise la Mélatonine</div>
+</div>
+
+{% form 'product', product, id: 'nas-pm-form', class: 'nas-pm-form' %}
+<input type="hidden" name="id" id="nas-pm-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+
+<div class="nas-pm-offer-header"><span class="nas-pm-offer-line"></span><span class="nas-pm-offer-text">Offre Exclusive <span class="nas-pm-offer-sep">|</span> Fin à Minuit</span><span class="nas-pm-offer-line"></span></div>
+<div class="nas-pm-tiles">
+{% assign nas_selected = product.selected_or_first_available_variant %}
+{% for variant in product.variants limit: 2 %}
+{% assign nas_pop = false %}{% if forloop.index == 2 %}{% assign nas_pop = true %}{% endif %}
+<label class="nas-pm-tile{% if nas_pop %} nas-pm-tile-popular{% endif %}{% if variant == nas_selected %} nas-pm-tile-selected{% endif %}" data-variant-id="{{ variant.id }}" data-gifts="{% if nas_pop %}1{% else %}0{% endif %}" data-price="{{ variant.price | money_without_currency }}" data-compare="{{ variant.compare_at_price | money_without_currency }}">
+{% if nas_pop %}<span class="nas-pm-tile-ribbon">★ MEILLEURE OFFRE · 2 GUIDES OFFERTS</span>{% endif %}
+<input type="radio" name="nas-pm-tile-radio" value="{{ variant.id }}" {% if variant == nas_selected %}checked{% endif %}>
+<span class="nas-pm-tile-check" aria-hidden="true"></span>
+<span class="nas-pm-tile-imgwrap">
+<img src="https://cdn.shopify.com/s/files/1/1013/1783/7187/files/nasely-bottle-single.webp?v=1790709670&width=200" alt="Flacon Nasely">
+<span class="nas-pm-tile-qty">×{% if nas_pop %}4{% else %}2{% endif %}</span>
+</span>
+<span class="nas-pm-tile-text">
+{% if nas_pop %}
+<span class="nas-pm-tile-label">2 Achetés = 2 OFFERTS</span>
+<span class="nas-pm-tile-sub">4 flacons · 4 mois de cure</span>
+{% else %}
+<span class="nas-pm-tile-label">1 Acheté = 1 OFFERT</span>
+<span class="nas-pm-tile-sub">2 flacons · 2 mois de cure</span>
+{% endif %}
+</span>
+<span class="nas-pm-tile-priceblock">
+<span class="nas-pm-tile-price">{{ variant.price | money }}</span>
+{% if variant.compare_at_price > variant.price %}<span class="nas-pm-tile-compare">{{ variant.compare_at_price | money }}</span>{% endif %}
+</span>
+{% if nas_pop %}
+<span class="nas-pm-tile-gifts">
+<span class="nas-pm-tile-gifts-title">🎁 Inclus uniquement avec cette offre :</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover"><span>Mieux dormir<br>en 14 jours</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Mieux dormir en 14 jours »</span><span class="nas-pm-gift-desc">Programme guidé jour par jour · PDF</span></span>
+<span class="nas-pm-gift-price"><s>9,99 €</s><b>OFFERT</b></span>
+</span>
+<span class="nas-pm-gift-row">
+<span class="nas-pm-gift-cover nas-pm-gift-cover-2"><span>Recettes<br>du soir</span></span>
+<span class="nas-pm-gift-info"><span class="nas-pm-gift-name">Guide « Recettes du soir pour mieux dormir »</span><span class="nas-pm-gift-desc">15 recettes maison · PDF</span></span>
+<span class="nas-pm-gift-price"><s>12,99 €</s><b>OFFERT</b></span>
+</span>
+</span>
+{% endif %}
+</label>
+{% endfor %}
+</div>
+<input type="hidden" id="nas-pm-gift-prop" name="properties[Cadeaux offerts]" value="Guide Mieux dormir en 14 jours + Guide Recettes du soir pour mieux dormir"{% assign nas_sel_index = 0 %}{% for v in product.variants limit: 2 %}{% if v == nas_selected %}{% assign nas_sel_index = forloop.index %}{% endif %}{% endfor %}{% unless nas_sel_index == 2 %} disabled{% endunless %}>
+
+<input type="hidden" name="quantity" value="1">
+{% if product.selected_or_first_available_variant.available %}
+<button type="submit" name="add" class="nas-pm-cta">{{ section.settings.cta_text }}</button>
+{% else %}
+<button type="submit" class="nas-pm-cta nas-pm-cta-disabled" disabled>{{ 'products.product.sold_out' | t }}</button>
+{% endif %}
+{% endform %}
+
+<div class="nas-pm-payment-icons">{% for type in shop.enabled_payment_types %}{{ type | payment_type_svg_tag: class: 'nas-pm-payment-icon' }}{% endfor %}</div>
+
+<div class="nas-pm-stock">
+<p class="nas-pm-stock-title">Stock en forte demande</p>
+<p class="nas-pm-stock-sub">Beaucoup de commandes en cours, quantités restantes limitées.</p>
+<div class="nas-pm-stock-bar"><div class="nas-pm-stock-bar-fill" style="width:87%"></div></div>
+<div class="nas-pm-stock-meta"><span>87% déjà commandé</span><span>Fin dans <span id="nas-pm-stock-timer">--:--:--</span></span></div>
+</div>
+
+<div class="nas-pm-guarantee">
+<div class="nas-pm-guarantee-badge">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5.25 3.4 9.74 8 11 4.6-1.26 8-5.75 8-11V5l-8-3z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+</div>
+<div class="nas-pm-guarantee-content">
+<h3 class="nas-pm-guarantee-title">Dormez mieux ou soyez remboursé</h3>
+<p class="nas-pm-guarantee-text">Si votre sommeil ne s'améliore pas dans les 90 jours suivant la réception, renvoyez le produit pour un remboursement complet. Aucune justification à fournir.</p>
+</div>
+</div>
+
+<div class="nas-pm-trust">
+<span class="nas-pm-trust-item">{{ section.settings.trust_1 }}</span>
+<span class="nas-pm-trust-item">{{ section.settings.trust_2 }}</span>
+<span class="nas-pm-trust-item">{{ section.settings.trust_3 }}</span>
+</div>
+
+<div class="nas-pm-review">
+<div class="nas-pm-review-stars">★★★★★</div>
+<p class="nas-pm-review-quote">"Un service client réactif et à l'écoute. J'ai adoré la texture des gélules, et surtout mes nuits sont enfin paisibles."</p>
+<div class="nas-pm-review-author">— Camille R. <span class="nas-pm-review-verified">✓ Achat vérifié</span></div>
+</div>
+
+<div class="nas-pm-faq">
+<h3 class="nas-pm-faq-heading">Questions fréquentes</h3>
+<details class="nas-pm-faq-item">
+<summary>Comment utiliser Nasely au quotidien ?</summary>
+<p>Prenez 2 gélules chaque soir, environ 30 minutes avant le coucher, avec un verre d'eau. Une prise régulière permet aux actifs de s'installer dans votre routine.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Pourquoi la cerise griotte plutôt qu'un autre actif ?</summary>
+<p>La griotte extraite à froid conserve une mélatonine naturelle microdosée et des anthocyanines qui favorisent le sommeil profond, sans les effets de somnolence associés à certains compléments de synthèse.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Au bout de combien de temps voit-on des résultats ?</summary>
+<p>La plupart des clientes remarquent un endormissement plus rapide dès les deux premières semaines, avec des bénéfices qui se renforcent après 6 à 12 semaines de prise régulière.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Nasely convient-il à tout le monde ?</summary>
+<p>Nasely est formulé pour les adultes cherchant à soutenir naturellement leur sommeil. Comme pour tout complément alimentaire, demandez l'avis d'un professionnel de santé en cas de grossesse, allaitement ou traitement en cours.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Le produit est-il végane et sans OGM ?</summary>
+<p>Oui. Nasely est 100% végétal, sans OGM, sans gluten, et fabriqué en France selon les bonnes pratiques de fabrication.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Comment fonctionne la garantie 90 jours ?</summary>
+<p>Si vous n'êtes pas satisfaite après 90 jours d'utilisation, contactez notre service client pour un remboursement intégral, sans question posée.</p>
+</details>
+<details class="nas-pm-faq-item">
+<summary>Comment recevoir mes 2 guides offerts ?</summary>
+<p>Les guides « Mieux dormir en 14 jours » et « Recettes du soir pour mieux dormir » sont offerts avec l'offre 2 achetés = 2 offerts. Vous les recevez au format PDF par e-mail après votre commande.</p>
+</details>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function() {
+  var slidesTrack = document.querySelector('.nas-pm-slides');
+  var slides = document.querySelectorAll('.nas-pm-slide');
+  var thumbs = document.querySelectorAll('.nas-pm-thumb-btn');
+  var thumbsTrack = document.getElementById('nas-pm-thumbs');
+  var thumbPrev = document.getElementById('nas-pm-thumb-prev');
+  var thumbNext = document.getElementById('nas-pm-thumb-next');
+
+  thumbs.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(btn.getAttribute('data-slide'), 10);
+      var target = slides[idx];
+      if (target && slidesTrack) {
+        slidesTrack.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+      }
+    });
+  });
+
+  if (thumbsTrack && thumbPrev && thumbNext) {
+    thumbPrev.addEventListener('click', function() {
+      thumbsTrack.scrollBy({ left: -220, behavior: 'smooth' });
+    });
+    thumbNext.addEventListener('click', function() {
+      thumbsTrack.scrollBy({ left: 220, behavior: 'smooth' });
+    });
+  }
+
+  if (slidesTrack && slides.length > 1) {
+    var scrollTimer;
+    slidesTrack.addEventListener('scroll', function() {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function() {
+        var trackCenter = slidesTrack.scrollLeft + slidesTrack.clientWidth / 2;
+        var closest = 0;
+        var closestDist = Infinity;
+        slides.forEach(function(s, i) {
+          var dist = Math.abs((s.offsetLeft + s.offsetWidth / 2) - trackCenter);
+          if (dist < closestDist) { closestDist = dist; closest = i; }
+        });
+        thumbs.forEach(function(t, i) { t.classList.toggle('nas-pm-thumb-active', i === closest); });
+      }, 80);
+    }, { passive: true });
+  }
+
+  var tiles = document.querySelectorAll('.nas-pm-tile');
+  var hiddenId = document.getElementById('nas-pm-variant-id');
+  var giftProp = document.getElementById('nas-pm-gift-prop');
+
+  function selectTile(tile) {
+    tiles.forEach(function(t) { t.classList.toggle('nas-pm-tile-selected', t === tile); });
+    var radio = tile.querySelector('input[type=radio]');
+    if (radio) radio.checked = true;
+    if (hiddenId) hiddenId.value = tile.getAttribute('data-variant-id');
+    if (giftProp) giftProp.disabled = tile.getAttribute('data-gifts') !== '1';
+  }
+
+  tiles.forEach(function(tile) {
+    tile.addEventListener('click', function() { selectTile(tile); });
+  });
+
+  var stockTimerEl = document.getElementById('nas-pm-stock-timer');
+  if (stockTimerEl) {
+    function tickStock() {
+      var now = new Date();
+      var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+      var diff = Math.max(0, midnight - now);
+      var h = Math.floor(diff / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      stockTimerEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+    }
+    tickStock();
+    setInterval(tickStock, 1000);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Fiche produit principale",
+  "tag": "section",
+  "class": "nas-p-main-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texte du bouton d'achat",
+      "default": "Ajouter au panier"
+    },
+    {
+      "type": "text",
+      "id": "trust_1",
+      "label": "Élément de réassurance 1",
+      "default": "Satisfait ou remboursé pendant 90 jours"
+    },
+    {
+      "type": "text",
+      "id": "trust_2",
+      "label": "Élément de réassurance 2",
+      "default": "Contrôlé par un laboratoire indépendant"
+    },
+    {
+      "type": "text",
+      "id": "trust_3",
+      "label": "Élément de réassurance 3",
+      "default": "100% Végétal, Sans OGM"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fiche produit principale"
+    }
+  ]
+}
+{% endschema %}
