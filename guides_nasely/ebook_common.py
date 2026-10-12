@@ -90,3 +90,33 @@ def foot(title, n):
 
 def doc(title, pages):
     return f'<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>{title}</title><style>{CSS}</style></head><body>{"".join(pages)}</body></html>'
+
+COVER_CSS = """
+.cv2{background:var(--ch);color:#fff;padding:14mm;display:block}
+.cv2 .frame{position:absolute;inset:14mm;border:1px solid rgba(255,255,255,.35);border-radius:2px;padding:14mm 14mm 12mm;display:flex;flex-direction:column;justify-content:space-between}
+.cv2 .row{display:flex;justify-content:space-between;align-items:center;font-size:8.5pt;letter-spacing:3px;text-transform:uppercase;font-weight:700;color:rgba(255,255,255,.8)}
+.cv2 .big{font-family:Playfair;font-weight:600;font-size:170pt;line-height:1;color:transparent;-webkit-text-stroke:1.2px rgba(243,201,194,.9);margin:0 0 9mm -2mm;height:62mm}
+.cv2 .lbl{font-size:9pt;letter-spacing:3px;text-transform:uppercase;color:#F3C9C2;font-weight:700;margin-bottom:6mm}
+.cv2 h1{font-family:Playfair;font-weight:600;font-size:40pt;line-height:1.05;margin:0 0 6mm}
+.cv2 h1 em{color:#F3C9C2}
+.cv2 .sub{font-size:12pt;line-height:1.55;color:rgba(255,255,255,.88);max-width:125mm;margin:0}
+.cv2 .sep{width:40mm;height:1px;background:rgba(255,255,255,.5);margin:8mm 0}
+.cv2 .logo{font-family:Playfair;font-size:20pt;letter-spacing:.5px}
+.bk2{background:var(--wm);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.bk2 .mono{font-family:Playfair;font-size:54pt;color:var(--ch);line-height:1;margin-bottom:6mm}
+.bk2 .line{width:30mm;height:1px;background:var(--ch);opacity:.4;margin:0 auto 10mm}
+"""
+CSS = CSS + COVER_CSS
+
+def cover2(big, label, title_html, sub, kind):
+    return f'''<div class="page cv2"><div class="frame">
+<div class="row"><span>Nasely</span><span>{kind}</span></div>
+<div><div class="big">{big}</div><div class="lbl">{label}</div><h1>{title_html}</h1><div class="sep"></div><p class="sub">{sub}</p></div>
+<div class="row"><span class="logo" style="letter-spacing:.5px;text-transform:none;font-weight:600;color:#fff">Nasely</span><span>Extrait de cerise griotte</span></div>
+</div></div>'''
+
+def back2(title_html, lead, legal):
+    return f'''<div class="page bk2"><div class="mono">N</div><div class="line"></div>
+<h2 style="font-size:30pt">{title_html}</h2><p class="lead" style="max-width:125mm">{lead}</p>
+<p style="font-weight:800;color:var(--ch);margin-top:10px">nasely.fr</p>
+<p class="small" style="max-width:140mm;margin-top:30mm">{legal}</p></div>'''

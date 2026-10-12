@@ -2,11 +2,7 @@ import sys; sys.path.insert(0,'/tmp/claude-0/-home-user-acompagnement/add46904-4
 from ebook_common import *
 T='Mieux dormir en 14 jours'
 P=[]
-P.append(f'''<div class="page cover"><div class="top"><span>Nasely</span><span>Guide offert</span></div>
-<div class="art">{cherry_svg(300)}</div>
-<div class="ttl"><div class="pill">Programme guidé · 14 jours</div><h1 style="margin-top:14px">Mieux dormir<br><em>en 14 jours</em></h1>
-<p class="sub">Une méthode simple, jour après jour, pour retrouver des nuits plus continues et des matins plus clairs.</p></div>
-<div class="bot"><span class="logo">Nasely</span><span style="font-size:9pt;opacity:.8">Extrait de cerise griotte</span></div></div>''')
+P.append(cover2('14','Programme guidé · 14 jours','Mieux dormir<br><em>en 14 jours</em>','Une méthode simple, jour après jour, pour retrouver des nuits plus continues et des matins plus clairs.','Guide offert'))
 
 P.append(f'''<div class="page"><div class="kicker">Bienvenue</div><h2>Tes nuits méritent <em>mieux</em>.</h2><div class="rule"></div>
 <p class="lead">Si tu tiens ce guide, c'est probablement que tes nuits ne ressemblent plus à ce qu'elles étaient. Endormissement long, réveil à 3 h du matin, réveil fatigué… Tu n'es pas seule : c'est l'une des plaintes les plus fréquentes après 40 ans.</p>
@@ -103,8 +99,5 @@ P.append(f'''<div class="page"><div class="kicker">Jour 14</div><h2>Ton <em>bila
 <div class="box"><h3 style="margin-top:0">Quand consulter ?</h3><p style="margin:0">Parles-en à ton médecin si tes difficultés persistent malgré ces habitudes, si elles durent depuis plus de 3 mois, en cas de ronflements forts, de pauses respiratoires pendant le sommeil, de jambes agitées le soir, ou si la fatigue retentit fortement sur ta journée. Ne modifie jamais un traitement sans son avis.</p></div>
 {foot(T,12)}</div>''')
 
-P.append(f'''<div class="page back"><div style="background:var(--ch);border-radius:50%;padding:16px;margin-bottom:22px">{cherry_svg(160)}</div>
-<h2 style="font-size:30pt">Belles nuits <em>à toi</em>.</h2><p class="lead" style="max-width:120mm">Merci de faire confiance à Nasely. Une question ? Notre équipe est là pour toi.</p>
-<p style="font-weight:800;color:var(--ch);margin-top:10px">nasely.fr</p>
-<p class="small" style="max-width:140mm;margin-top:30mm">Ce guide est fourni à titre informatif et ne remplace pas une consultation médicale. Nasely est un complément alimentaire : il ne remplace pas une alimentation variée et équilibrée ni un mode de vie sain. © Nasely. Reproduction interdite.</p></div>''')
+P.append(back2('Belles nuits <em>à toi</em>.',"Merci de faire confiance à Nasely. Une question ? Notre équipe est là pour toi.","Ce guide est fourni à titre informatif et ne remplace pas une consultation médicale. Nasely est un complément alimentaire : il ne remplace pas une alimentation variée et équilibrée ni un mode de vie sain. © Nasely. Reproduction interdite."))
 open(sys.argv[1],'w').write(doc('Mieux dormir en 14 jours · Nasely',P))

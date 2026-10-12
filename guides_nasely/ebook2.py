@@ -2,11 +2,7 @@ import sys; sys.path.insert(0,'/tmp/claude-0/-home-user-acompagnement/add46904-4
 from ebook_common import *
 T='Recettes du soir pour mieux dormir'
 P=[]
-P.append(f'''<div class="page cover"><div class="top"><span>Nasely</span><span>Guide offert</span></div>
-<div class="art">{cherry_svg(300,moon=False)}</div>
-<div class="ttl"><div class="pill">15 recettes · maison</div><h1 style="margin-top:14px">Recettes du soir<br><em>pour mieux dormir</em></h1>
-<p class="sub">Boissons, dîners légers, collations et desserts : des recettes simples et gourmandes pour préparer des nuits plus douces.</p></div>
-<div class="bot"><span class="logo">Nasely</span><span style="font-size:9pt;opacity:.8">Extrait de cerise griotte</span></div></div>''')
+P.append(cover2('15','15 recettes · maison','Recettes du soir<br><em>pour mieux dormir</em>','Boissons, dîners légers, collations et desserts : des recettes simples et gourmandes pour préparer des nuits plus douces.','Guide offert'))
 P.append(f'''<div class="page"><div class="kicker">Introduction</div><h2>Ce que tu manges <em>se ressent la nuit</em></h2><div class="rule"></div>
 <p class="lead">Aucun aliment n'est un somnifère. Mais le contenu de ton assiette, et surtout l'heure à laquelle tu dînes, peuvent faciliter ou perturber ton sommeil.</p>
 <div class="grid2" style="margin-top:12px">
@@ -60,8 +56,5 @@ P.append(f'''<div class="page"><div class="kicker">Organisation</div><h2>Ton men
 shop=[('Fruits & légumes',['Courge butternut','Patate douce','Épinards (jeunes pousses)','Champignons','Oignons, oignons nouveaux','Concombre, avocat','Bananes, kiwis, pommes','Citrons, orange','Gingembre frais','Griottes (fraîches ou surgelées)']),('Protéines',['Pavés de saumon','Blancs de poulet','Tofu ferme','Œufs','Yaourts nature / skyr']),('Épicerie',['Lentilles corail','Quinoa, nouilles de riz','Flocons d\'avoine','Farine, sucre','Pâte miso, bouillon de légumes','Lait de coco','Chocolat noir 70 %']),('Graines & fruits secs',['Amandes, noix','Graines de courge','Graines de chia, sésame','Purée d\'amande']),('Tisanes & boissons',['Camomille, tilleul, verveine','Jus de griotte pur','Lait ou boisson végétale']),('Épices & douceurs',['Curcuma, cannelle, cumin','Vanille, poivre','Miel, sirop d\'érable'])]
 blocks=''.join(f'<div class="card"><h3 style="margin-top:0;color:var(--ch)">{t}</h3><ul class="ch" style="font-size:9.4pt">{"".join(f"<li>{i}</li>" for i in items)}</ul></div>' for t,items in shop)
 P.append(f'''<div class="page"><div class="kicker">Pratique</div><h2>Ta liste <em>de courses</em></h2><div class="rule"></div><div class="grid3">{blocks}</div>{foot(T,11)}</div>''')
-P.append(f'''<div class="page back"><div style="background:var(--ch);border-radius:50%;padding:16px;margin-bottom:22px">{cherry_svg(160)}</div>
-<h2 style="font-size:30pt">Bon appétit, <em>et belles nuits</em>.</h2><p class="lead" style="max-width:125mm">Associe ces recettes au programme « Mieux dormir en 14 jours » pour de meilleurs résultats.</p>
-<p style="font-weight:800;color:var(--ch);margin-top:10px">nasely.fr</p>
-<p class="small" style="max-width:140mm;margin-top:30mm">Ces recettes sont proposées à titre informatif dans le cadre d'une alimentation variée et équilibrée. En cas d'allergie, de régime particulier ou de traitement en cours, demande conseil à un professionnel de santé. Nasely est un complément alimentaire : il ne remplace pas une alimentation variée et équilibrée ni un mode de vie sain. © Nasely. Reproduction interdite.</p></div>''')
+P.append(back2('Bon appétit, <em>et belles nuits</em>.','Associe ces recettes au programme « Mieux dormir en 14 jours » pour de meilleurs résultats.',"Ces recettes sont proposées à titre informatif dans le cadre d'une alimentation variée et équilibrée. En cas d'allergie, de régime particulier ou de traitement en cours, demande conseil à un professionnel de santé. Nasely est un complément alimentaire : il ne remplace pas une alimentation variée et équilibrée ni un mode de vie sain. © Nasely. Reproduction interdite."))
 open(sys.argv[1],'w').write(doc('Recettes du soir pour mieux dormir · Nasely',P))
